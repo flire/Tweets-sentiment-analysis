@@ -22,7 +22,7 @@ class Tweet:
 class TweetParser:
     def __init__(self, mystempath):
         self.mystem = pexpect.spawn(mystempath+" -l")
-        self.mystem.delaybeforesend = 0
+        self.mystem.delaybeforesend = 0.1
         self.lemma_regexp = re.compile(r"{([^}]+)}")
 
     def __enter__(self):
