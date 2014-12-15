@@ -39,34 +39,11 @@ class LemmaExtracter:
             result.append(lemma.split('|')[0])
         return result
 
-# class TweetParser:
-#     def __init__(self, mystempath):
-#         self.mystem = pexpect.spawn(mystempath+" -l")
-#         self.mystem.delaybeforesend = 0.1
-#         self.lemma_regexp = re.compile(r"{([^}]+)}")
-#
-#     def __enter__(self):
-#         return self
-#
-#     def parse(self, preprocessed_string):
-#         self.mystem.flush()
-#         self.mystem.sendline(preprocessed_string.encode())
-#         self.mystem.expect("({.+})+")
-#         lemmas_string = self.mystem.after.decode()
-#         lemmas = self.lemma_regexp.findall(lemmas_string)
-#         result = []
-#         for lemma in lemmas:
-#             result.append(lemma.split('|')[0])
-#         return result
-#
-#     def __exit__(self, exc_type, exc_val, exc_tb):
-#         self.mystem.terminate()
-
 def tweetsParser(filename, sentiment, total=float("inf"), skip_first=0):
     nextTweetNumber = 1
     with open(filename) as tweets:
         for i in range(skip_first):
-            tweets.__next__()
+            next(tweets)
         with LemmaExtracter(filename+".lemmas") as extracter:
             for tweetline in tweets:
                 yield Tweet(tweetline, sentiment, extracter.nextlemmas())

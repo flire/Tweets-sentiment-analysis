@@ -11,7 +11,7 @@ from tweetsParser import *
 
 def extract_features(filename, sentiment, count, skip_first=0):
     result = []
-    for tweet in tweetsParser(filename, sentiment, count, skip_fisrt):
+    for tweet in tweetsParser(filename, sentiment, count, skip_first):
         result += [' '.join(tweet.lemmatized)]  # вот тут хардкод
     return result
 
