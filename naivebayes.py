@@ -9,19 +9,19 @@ from optparse import OptionParser
 from tweetsParser import *
 
 
-def extract_features(filename, sentiment, mystempath, vectorizer, count):
+def extract_features(filename, sentiment, count, skip_first=0):
     result = []
-    for tweet in tweetsParser(filename, sentiment, mystempath, count):
+    for tweet in tweetsParser(filename, sentiment, count, skip_fisrt):
         result += [' '.join(tweet.lemmatized)]  # вот тут хардкод
     return result
 
 
-def main(pos_tweets_filename, neg_tweets_filename, tweets_count=float("inf"), mystempath="./mystem", pos_label="pos",
+def main(pos_tweets_filename, neg_tweets_filename, tweets_count=float("inf"), skip_first=0, pos_label="pos",
          neg_label="neg"):
     machine = BernoulliNB()
     vectorizer = CountVectorizer(ngram_range=(1,1))
-    pos_features = extract_features(pos_tweets_filename, pos_label, mystempath, vectorizer, tweets_count)
-    neg_features = extract_features(neg_tweets_filename, neg_label, mystempath,vectorizer, tweets_count)
+    pos_features = extract_features(pos_tweets_filename, pos_label, tweets_count, skip_first)
+    neg_features = extract_features(neg_tweets_filename, neg_label, tweets_count, skip_first)
     features = vectorizer.fit_transform(pos_features + neg_features)
     labels = [pos_label, ] * len(pos_features) + [neg_label,] * len(neg_features)
     machine.fit(features, labels)
@@ -39,6 +39,7 @@ if __name__ == "__main__":
     # exit()
     parser = OptionParser()
     parser.add_option("-c", "--count", type='int', dest="count", default=float("inf"))
+    parser.add_option("--skip", type='int', dest="skipfirst", default=0)
     parser.add_option("--mystempath", dest="mystempath", default="./mystem")
     parser.add_option("-p", "--postweets", dest="postweetsfilename")
     parser.add_option("-n", "--negtweets", dest="negtweetsfilename")
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     machine, vectorizer, features = main(options.postweetsfilename,
                    options.negtweetsfilename,
                    options.count,
-                   options.mystempath)
+                   skip_first=options.skipfirst)
     for tweet in tweetsParser(options.postweetsfilename, "undef", options.mystempath, 10):
         line = " ".join(tweet.lemmatized)
         tr = vectorizer.transform([line,])

@@ -1,25 +1,19 @@
 __author__ = 'flire'
 import subprocess
-import sys
 from tweetsParser import Tweet
 from optparse import OptionParser
-class StupidLemmatizer:
-    def parse(self, string):
-        return string
 def lemmatize(tweetspath, count = float("inf"),  mystempath="./mystem"):
-    outfile = tweetspath+".lemmas"
-    mystem = subprocess.Popen([mystempath, "-l", "-", outfile], stdin=subprocess.PIPE, universal_newlines=True)
-    lemmatizer = StupidLemmatizer()
+    outfile = tweetspath+".preprocessed"
     nextTweetNumber = 1
     with open(tweetspath, 'r') as tweetfile:
-        for tweetline in tweetfile:
-            tweet = Tweet(tweetline, "undef", lemmatizer)
-            mystem.stdin.write(tweet.lemmatized+"\n")
-            nextTweetNumber+=1
-            if nextTweetNumber>count:
-                break
-    mystem.stdin.close()
-    mystem.wait()
+        with open(outfile, "w") as out:
+            for tweetline in tweetfile:
+                tweet = Tweet(tweetline, "undef")
+                out.write(tweet.preprocess()+"\n")
+                nextTweetNumber+=1
+                if nextTweetNumber>count:
+                    break
+    subprocess.call([mystempath, "-cl", outfile, tweetspath+".lemmas"])
 
 if __name__ == "__main__":
     parser = OptionParser()
