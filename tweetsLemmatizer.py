@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 __author__ = 'flire'
 import subprocess
 from tweetsParser import Tweet
@@ -11,6 +12,8 @@ def lemmatize(tweetspath, count = float("inf"),  mystempath="./mystem"):
                 tweet = Tweet(tweetline, "undef")
                 out.write(tweet.preprocess()+"\n")
                 nextTweetNumber+=1
+                if nextTweetNumber % 10000 == 0:
+                    print(nextTweetNumber)
                 if nextTweetNumber>count:
                     break
     subprocess.call([mystempath, "-cl", outfile, tweetspath+".lemmas"])

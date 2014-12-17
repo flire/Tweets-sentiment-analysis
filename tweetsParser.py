@@ -6,7 +6,12 @@ import pexpect
 
 class Tweet:
     def __init__(self, tweetline, sentiment, lemmatized = None):
-        self.author, self.tweetline = tweetline.split('\t')
+        tweettuple = tweetline.split('\t')
+        if len(tweettuple) == 2:
+            self.author = tweettuple[0]
+            self.tweetline = tweettuple[1]
+        else:
+            self.tweetline = tweettuple[0]
         self.tweetline = self.tweetline.strip()
         self.tweetline = re.sub(r"\\(n|t)", "", self.tweetline)
         if lemmatized != None:
@@ -39,11 +44,9 @@ class LemmaExtracter:
             result.append(lemma.split('|')[0])
         return result
 
-def tweetsParser(filename, sentiment, total=float("inf"), skip_first=0):
+def tweetsParser(filename, sentiment, total=float("inf")):
     nextTweetNumber = 1
     with open(filename) as tweets:
-        for i in range(skip_first):
-            next(tweets)
         with LemmaExtracter(filename+".lemmas") as extracter:
             for tweetline in tweets:
                 yield Tweet(tweetline, sentiment, extracter.nextlemmas())
