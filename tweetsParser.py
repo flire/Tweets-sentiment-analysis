@@ -53,3 +53,5 @@ def tweetsParser(filename, sentiment, total=float("inf")):
                 nextTweetNumber+=1
                 if nextTweetNumber>total:
                     break
+                if nextTweetNumber%10000 == 0:
+                    print(nextTweetNumber)
